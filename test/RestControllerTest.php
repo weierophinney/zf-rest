@@ -160,7 +160,7 @@ class RestControllerTest extends TestCase
      *
      * @group 43
      */
-    public function testCreateDoesNotSetLocationHeaderOnMissingEntityIdentifier()
+    public function testCreateSetsLocationHeaderOnMissingEntityIdentifier()
     {
         $this->resource->getEventManager()->attach('create', function ($e) {
             return array('foo' => 'bar');
@@ -170,7 +170,8 @@ class RestControllerTest extends TestCase
         $this->assertInstanceOf('ZF\Hal\Entity', $result);
         $response = $this->controller->getResponse();
         $headers  = $response->getHeaders();
-        $this->assertFalse($headers->has('Location'));
+        $this->assertTrue($headers->has('Location'));
+        $this->assertContains('/resource', $headers->get('Location')->getFieldValue());
     }
 
     public function testCreateReturnsHalEntityOnSuccess()

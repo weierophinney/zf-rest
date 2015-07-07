@@ -378,16 +378,13 @@ class RestController extends AbstractRestfulController
 
         $halEntity = $this->createHalEntity($entity);
 
-        if ($halEntity->id) {
-            $plugin = $this->plugin('Hal');
+        $self        = $halEntity->getLinks()->get('self');
+        $plugin      = $this->plugin('Hal');
+        $selfLinkUrl = $plugin->fromLink($self);
 
-            $self = $halEntity->getLinks()->get('self');
-            $selfLinkUrl = $plugin->fromLink($self);
-
-            $response = $this->getResponse();
-            $response->setStatusCode(201);
-            $response->getHeaders()->addHeaderLine('Location', $selfLinkUrl);
-        }
+        $response = $this->getResponse();
+        $response->setStatusCode(201);
+        $response->getHeaders()->addHeaderLine('Location', $selfLinkUrl);
 
         $events->trigger('create.post', $this, array(
             'data'     => $data,
