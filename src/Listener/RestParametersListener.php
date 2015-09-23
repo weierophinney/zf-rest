@@ -9,23 +9,14 @@ namespace ZF\Rest\Listener;
 use ZF\Rest\RestController;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\SharedEventManagerInterface;
-use Zend\EventManager\SharedListenerAggregateInterface;
 use Zend\Mvc\MvcEvent;
 
-class RestParametersListener implements
-    ListenerAggregateInterface,
-    SharedListenerAggregateInterface
+class RestParametersListener implements ListenerAggregateInterface
 {
     /**
      * @var \Zend\Stdlib\CallbackHandler[]
      */
     protected $listeners = [];
-
-    /**
-     * @var \Zend\Stdlib\CallbackHandler[]
-     */
-    protected $sharedListeners = [];
 
     /**
      * @param EventManagerInterface $events
@@ -43,31 +34,6 @@ class RestParametersListener implements
         foreach ($this->listeners as $index => $listener) {
             if ($events->detach($listener)) {
                 unset($this->listeners[$index]);
-            }
-        }
-    }
-
-    /**
-     * @param SharedEventManagerInterface $events
-     */
-    public function attachShared(SharedEventManagerInterface $events)
-    {
-        $this->sharedListeners[] = $events->attach(
-            'ZF\Rest\RestController',
-            MvcEvent::EVENT_DISPATCH,
-            [$this, 'onDispatch'],
-            100
-        );
-    }
-
-    /**
-     * @param SharedEventManagerInterface $events
-     */
-    public function detachShared(SharedEventManagerInterface $events)
-    {
-        foreach ($this->sharedListeners as $index => $listener) {
-            if ($events->detach('ZF\Rest\RestController', $listener)) {
-                unset($this->sharedListeners[$index]);
             }
         }
     }

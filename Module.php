@@ -49,6 +49,14 @@ class Module
         $events->attachAggregate($services->get('ZF\Rest\OptionsListener'));
 
         $sharedEvents = $events->getSharedManager();
-        $sharedEvents->attachAggregate($services->get('ZF\Rest\RestParametersListener'));
+        $sharedEvents->attach(
+            'ZF\Rest\RestController',
+            MvcEvent::EVENT_DISPATCH,
+            function ($e) use ($services) {
+                $parametersListener = $services->get('ZF\Rest\RestParametersListener');
+                return $parametersListener->onDispatch($e);
+            },
+            100
+        );
     }
 }

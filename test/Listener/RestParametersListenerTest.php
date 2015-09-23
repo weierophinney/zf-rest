@@ -60,26 +60,4 @@ class RestParametersListenerTest extends TestCase
         $this->listener->onDispatch($this->event);
         $this->assertSame($this->query, $this->resource->getQueryParams());
     }
-
-    public function testAttachSharedAttachOneListenerOnEventDispatch()
-    {
-        $sharedEventManager = new SharedEventManager();
-        $sharedEventManager->attachAggregate($this->listener);
-
-        $listener = $sharedEventManager->getListeners('ZF\Rest\RestController', MvcEvent::EVENT_DISPATCH);
-
-        $this->assertEquals(1, $listener->count());
-    }
-
-    public function testDetachSharedDetachAttachedListener()
-    {
-        $sharedEventManager = new SharedEventManager();
-        $sharedEventManager->attachAggregate($this->listener);
-
-        $sharedEventManager->detachAggregate($this->listener);
-
-        $listener = $sharedEventManager->getListeners('ZF\Rest\RestController', MvcEvent::EVENT_DISPATCH);
-
-        $this->assertEquals(0, $listener->count());
-    }
 }
